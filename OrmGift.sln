@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30128.36
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrmGift", "OrmGift\OrmGift.csproj", "{E6714BAA-7706-4ED0-9EE1-5EC582B03801}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{37493BDE-C61F-427A-968F-3C27B8083901}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6714BAA-7706-4ED0-9EE1-5EC582B03801}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6714BAA-7706-4ED0-9EE1-5EC582B03801}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6714BAA-7706-4ED0-9EE1-5EC582B03801}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6714BAA-7706-4ED0-9EE1-5EC582B03801}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37493BDE-C61F-427A-968F-3C27B8083901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37493BDE-C61F-427A-968F-3C27B8083901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37493BDE-C61F-427A-968F-3C27B8083901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37493BDE-C61F-427A-968F-3C27B8083901}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9BA6AF21-679E-45AD-B773-1306F725E09E}
+	EndGlobalSection
+EndGlobal
