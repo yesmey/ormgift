@@ -44,7 +44,7 @@ namespace {type.Namespace}
 
         private static string GenerateHashCodes(ModelType type)
         {
-            return "var hash = new HashCodeCombiner();"
+            return "var hash = HashCodeCombiner.Start();"
                 + string.Join(" ", type.Fields.Select(f => $"hash.Add({f.Name}.GetHashCode());"))
                 + "return hash;";
         }

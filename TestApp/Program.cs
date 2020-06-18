@@ -1,12 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using OrmGift.DataModeling;
 using System;
-using System.Data;
-using System.Data.Common;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestApp
@@ -15,7 +10,7 @@ namespace TestApp
     {
         static async Task Main(string[] args)
         {
-            await using var context = Product.CreateDataContext(new SqlConnection(""));
+            await using var context = Product.CreateDataContext(new SqlConnection("secret :)"));
             var allProducts = await context.GetAllAsync();
             var guid = allProducts.First(x => x.Name == "Jesper").Id;
             var product = await context.GetAsync(guid);
