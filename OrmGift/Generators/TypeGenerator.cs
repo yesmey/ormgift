@@ -52,58 +52,44 @@ namespace {type.Namespace}
 			}}
 		}}
 
-		public async Task<{type.TypeName}> GetAsync({type.Key.Type.FullName} {type.Key.Name}, CancellationToken cancellationToken = default)
+		public async Task<{type.TypeName}> GetAsync({type.Key.Type.FullName} key, CancellationToken cancellationToken = default)
 		{{
-			try
+            await _connection.OpenAsync(cancellationToken);
+            using SqlCommand command = new SqlCommand(""SELECT * FROM {GetTableName(type)} WHERE {type.Key.Name} = @{type.Key.Name}"", _connection);
+			command.Parameters.Add(new SqlParameter(""@{type.Key.Name}"", key));
+            using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow | CommandBehavior.SingleResult, cancellationToken);
+
+            if (await reader.ReadAsync(cancellationToken))
             {{
-                await _connection.OpenAsync(cancellationToken);
-                using SqlCommand command = new SqlCommand(""SELECT * FROM {type.TypeName} WHERE {type.Key.Name} = @{type.Key.Name}"", _connection);
-				command.Parameters.Add(new SqlParameter(""@{type.Key.Name}"", {type.Key.Name}));
-                using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow | CommandBehavior.SingleResult, cancellationToken);
-
-                if (await reader.ReadAsync(cancellationToken))
-                {{
-					{GenerateReaders(type)}
-                    return new {type.TypeName}({GenerateConstructorParameters(type)});
-                }}
-
-                while (await reader.NextResultAsync(cancellationToken))
-                {{
-                }}
-
-                return default;
+				{GenerateReaders(type)}
+                return new {type.TypeName}({GenerateConstructorParameters(type)});
             }}
-            catch
-            {{
-                return default;
-            }}
+
+            return default;
+		}}
+
+        public async Task<int> InsertAsync({type.TypeName} item, CancellationToken cancellationToken = default)
+	    {{
+            await _connection.OpenAsync(cancellationToken);
+            using SqlCommand command = new SqlCommand(""INSERT INTO {GetTableName(type)}({string.Join(",", type.Fields.Select(f => f.Name))}) VALUES ({string.Join(",", type.Fields.Select(f => $"@{f.Name}"))})"", _connection);
+			//command.Parameters.Add(new SqlParameter(""@{type.Key.Name}"", {type.Key.Name}));
+            return await command.ExecuteNonQueryAsync(cancellationToken);
 		}}
 
 		public async Task<List<{type.TypeName}>> GetAllAsync(CancellationToken cancellationToken = default)
         {{
-            try
+            await _connection.OpenAsync(cancellationToken);
+            using SqlCommand command = new SqlCommand(""SELECT * FROM {GetTableName(type)}"", _connection);
+            using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow, cancellationToken);
+
+            var buffer = new List<{type.TypeName}>();
+            while (await reader.ReadAsync(cancellationToken))
             {{
-                await _connection.OpenAsync(cancellationToken);
-                using SqlCommand command = new SqlCommand(""SELECT * FROM {type.TypeName}"", _connection);
-                using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow, cancellationToken);
-
-                var buffer = new List<{type.TypeName}>();
-                while (await reader.ReadAsync(cancellationToken))
-                {{
-					{GenerateReaders(type)}
-                    buffer.Add(new {type.TypeName}({GenerateConstructorParameters(type)}));
-                }}
-
-                while (await reader.NextResultAsync(cancellationToken))
-                {{
-                }}
-
-                return buffer;
+				{GenerateReaders(type)}
+                buffer.Add(new {type.TypeName}({GenerateConstructorParameters(type)}));
             }}
-            catch
-            {{
-                return default;
-            }}
+
+            return buffer;
         }}
 	}}
 }}";
@@ -142,6 +128,11 @@ namespace {type.Namespace}
         private static string GenerateFieldReader(ModelField field)
         {
             return $@"var {field.Name.ToLower()} = {GenerateReaderPerType(field)};";
+        }
+
+        private static string GetTableName(ModelType type)
+        {
+            return type.TableInfo.Name;
         }
 
         private static string GenerateReaderPerType(ModelField field)

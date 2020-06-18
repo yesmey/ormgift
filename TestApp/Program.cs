@@ -13,7 +13,7 @@ namespace TestApp
         }
     }
 
-    [DataModel]
+    [DataModel("CustomDatabaseName")]
     public partial class Product
     {
         public Guid Id { get; set; }

@@ -14,6 +14,7 @@ namespace OrmGift
         public string TypeName { get; }
         public string TypeVariant { get; }
         public string ReadOnly { get; }
+        public DbTypeInfo TableInfo { get; }
         public ModelField Key { get; }
         public IReadOnlyCollection<ModelField> Fields { get; }
 
@@ -24,6 +25,7 @@ namespace OrmGift
             TypeName = type.Name;
             ReadOnly = type.IsReadOnly ? "readonly" : string.Empty;
             TypeVariant = type.TypeKind.ToString().ToLower(); // can only be class or struct :p
+            TableInfo = new DbTypeInfo(type);
 
             var properties = type.GetMembers().OfType<IPropertySymbol>().Where(SyntaxHelper.IsAutoProperty).ToArray();
 
@@ -40,6 +42,19 @@ namespace OrmGift
         }
     }
 
+    internal sealed class DbTypeInfo
+    {
+        public string Name { get; }
+        public DbTypeInfo(INamedTypeSymbol type)
+        {
+            var modelAttribute = type.GetAttribute(typeof(DataModelAttribute).FullName);
+            Name = modelAttribute.ConstructorArguments.Select(x => x.Value as string).FirstOrDefault();
+            if (Name == null)
+            {
+                Name = type.Name;
+            }
+        }
+    }
 
     internal sealed class ModelField
     {
