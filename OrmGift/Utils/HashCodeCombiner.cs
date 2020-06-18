@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -30,9 +29,16 @@ namespace OrmGift.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add(int i)
+        private void Add(int i)
         {
             _combinedHash64 = ((_combinedHash64 << 5) + _combinedHash64) ^ i;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Add<TValue>(TValue value)
+        {
+            var hashCode = value != null ? EqualityComparer<TValue>.Default.GetHashCode(value) : 0;
+            Add(hashCode);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
