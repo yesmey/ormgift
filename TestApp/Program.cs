@@ -1,15 +1,31 @@
 ﻿using Microsoft.Data.SqlClient;
 using OrmGift.DataModeling;
 using System;
+using System.Data;
+using System.Data.Common;
+using System.Globalization;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace TestApp
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var context = Product.CreateDataContext(new SqlConnection(""));
-            Console.WriteLine();
+            await using var context = Product.CreateDataContext(new SqlConnection(""));
+            var allProducts = await context.GetAllAsync();
+            var guid = allProducts.First(x => x.Name == "Jesper").Id;
+            var product = await context.GetAsync(guid);
+            Console.WriteLine(product.ToString());
+
+            var otherGuid = allProducts.First(x => x.Name != "Jesper").Id;
+            var product2 = await context.GetAsync(otherGuid);
+            Console.WriteLine(product2.ToString());
+
+            Console.WriteLine(product == product2);
         }
     }
 
@@ -22,10 +38,10 @@ namespace TestApp
     }
 
     [DataModel]
-    public readonly partial struct StackExempel
+    public partial class AnnanProduct
     {
         [DataKey]
         public int CustomId { get; }
-        public string Name { get; }
+        public object Value { get; set; }
     }
 }

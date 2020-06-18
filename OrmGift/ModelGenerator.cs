@@ -32,10 +32,14 @@ namespace OrmGift
                 if (type.HasAttribute(typeof(DataModelAttribute).FullName))
                 {
                     var modelType = new ModelType((INamedTypeSymbol)type);
-                    var code = TypeGenerator.Generate(modelType);
+                    var typeCode = DbTypeGenerator.Generate(modelType);
+                    var contextCode = DbTypeContextGenerator.Generate(modelType);
 
-                    File.WriteAllText($"C:\\temp\\{type.Name}.Generated.cs", SourceText.From(code, Encoding.UTF8).ToString());
-                    context.AddSource($"{type.Name}.Generated.cs", SourceText.From(code, Encoding.UTF8));
+                    File.WriteAllText($"C:\\temp\\{type.Name}.Generated.cs", SourceText.From(typeCode, Encoding.UTF8).ToString());
+                    File.WriteAllText($"C:\\temp\\{type.Name}DataContext.Generated.cs", SourceText.From(contextCode, Encoding.UTF8).ToString());
+
+                    context.AddSource($"{type.Name}.Generated.cs", SourceText.From(typeCode, Encoding.UTF8));
+                    context.AddSource($"{type.Name}DataContext.Generated.cs", SourceText.From(contextCode, Encoding.UTF8));
                 }
             }
         }
@@ -43,17 +47,13 @@ namespace OrmGift
 
     internal class ModelSyntaxReceiver : ISyntaxReceiver
     {
-        public List<TypeDeclarationSyntax> Types = new List<TypeDeclarationSyntax>();
+        public List<ClassDeclarationSyntax> Types = new List<ClassDeclarationSyntax>();
 
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
             if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax && classDeclarationSyntax.AttributeLists.Count > 0)
             {
                 Types.Add(classDeclarationSyntax);
-            }
-            else if (syntaxNode is StructDeclarationSyntax structDeclarationSyntax && structDeclarationSyntax.AttributeLists.Count > 0)
-            {
-                Types.Add(structDeclarationSyntax);
             }
         }
     }
