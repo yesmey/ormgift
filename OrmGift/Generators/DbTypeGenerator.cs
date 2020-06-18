@@ -46,12 +46,12 @@ namespace {type.Namespace}
         {
             return "var hash = HashCodeCombiner.Start();"
                 + string.Join(" ", type.Fields.Select(f => $"hash.Add({f.Name});"))
-                + "return hash;";
+                + "return hash.CombinedHash;";
         }
 
         private static string GenerateEquals(ModelType type, string otherParameter)
         {
-            return "return " + string.Join(" && ", type.Fields.Select(f => $"{f.Name}.Equals(other.{f.Name})")) + ";";
+            return "return " + string.Join(" && ", type.Fields.Select(f => $"{f.Name}.Equals({otherParameter}.{f.Name})")) + ";";
         }
 
         private static string GenerateToString(ModelType type)

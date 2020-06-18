@@ -23,12 +23,6 @@ namespace OrmGift.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator int(HashCodeCombiner self)
-        {
-            return self.CombinedHash;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Add(int i)
         {
             _combinedHash64 = ((_combinedHash64 << 5) + _combinedHash64) ^ i;
