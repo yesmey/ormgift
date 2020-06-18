@@ -1,4 +1,4 @@
-# ormgift
+# ORMgift
 
 Compile-time Micro ORM (Object-relational mapping).
 
