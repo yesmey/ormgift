@@ -12,14 +12,14 @@ using Microsoft.Data.SqlClient;
 using OrmGift.Utils;
 namespace {type.Namespace}
 {{
-	{type.Accesibility} partial class {type.TypeName} : IEquatable<{type.TypeName}>
-	{{
-		public {type.TypeName}({GenerateConstructor(type)})
-		{{
-			{GenerateConstructorSetters(type)}
-		}}
+    {type.Accesibility} partial class {type.TypeName} : IEquatable<{type.TypeName}>
+    {{
+        public {type.TypeName}({GenerateConstructor(type)})
+        {{
+            {GenerateConstructorSetters(type)}
+        }}
 
-		public override string ToString()
+        public override string ToString()
         {{
             return {GenerateToString(type)};
         }}
@@ -37,8 +37,8 @@ namespace {type.Namespace}
         public static bool operator ==({type.TypeName} left, {type.TypeName} right) => left.Equals(right);
         public static bool operator !=({type.TypeName} left, {type.TypeName} right) => !(left == right);
 
-		public static {type.TypeName}DataContext CreateDataContext(SqlConnection cnn, bool keepAlive = false) => new {type.TypeName}DataContext(cnn, keepAlive);
-	}}
+        public static {type.TypeName}DataContext CreateDataContext(SqlConnection cnn, bool keepAlive = false) => new {type.TypeName}DataContext(cnn, keepAlive);
+    }}
 }}";
         }
 

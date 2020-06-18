@@ -16,45 +16,45 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 namespace {type.Namespace}
 {{
-	public sealed class {type.TypeName}DataContext : IDisposable, IAsyncDisposable
-	{{
-		private readonly SqlConnection _connection;
-		private readonly bool _keepAlive;
+    public sealed class {type.TypeName}DataContext : IDisposable, IAsyncDisposable
+    {{
+        private readonly SqlConnection _connection;
+        private readonly bool _keepAlive;
 
-		internal {type.TypeName}DataContext(SqlConnection connection, bool keepAlive)
-		{{
-			_connection = connection;
-			_keepAlive = keepAlive;
-		}}
+        internal {type.TypeName}DataContext(SqlConnection connection, bool keepAlive)
+        {{
+            _connection = connection;
+            _keepAlive = keepAlive;
+        }}
 
-		public void Dispose()
-		{{
-			if (!_keepAlive)
-			{{
-				_connection?.Dispose();
-			}}
-		}}
+        public void Dispose()
+        {{
+            if (!_keepAlive)
+            {{
+                _connection?.Dispose();
+            }}
+        }}
 
         public ValueTask DisposeAsync()
-		{{
-			Dispose();
+        {{
+            Dispose();
             return default;
-		}}
+        }}
 
-		public async ValueTask<{type.TypeName}> GetAsync({type.Key.Type.FullName} key, CancellationToken cancellationToken = default)
-		{{
+        public async ValueTask<{type.TypeName}> GetAsync({type.Key.Type.FullName} key, CancellationToken cancellationToken = default)
+        {{
             bool wasClosed = _connection.State == ConnectionState.Closed;
 
             try
             {{
                 if (wasClosed) await _connection.OpenAsync(cancellationToken);
                 using SqlCommand command = new SqlCommand(""SELECT * FROM {GetTableName(type)} WHERE {type.Key.Name} = @{type.Key.Name}"", _connection);
-			    command.Parameters.Add(new SqlParameter(""@{type.Key.Name}"", key));
+                command.Parameters.Add(new SqlParameter(""@{type.Key.Name}"", key));
                 using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow | CommandBehavior.SingleResult, cancellationToken);
 
                 if (await reader.ReadAsync(cancellationToken))
                 {{
-				    {GenerateReaders(type)}
+                    {GenerateReaders(type)}
                     return new {type.TypeName}({GenerateConstructorParameters(type)});
                 }}
 
@@ -64,26 +64,26 @@ namespace {type.Namespace}
             {{
                 if (wasClosed) _connection.Close();
             }}
-		}}
+        }}
 
         public async ValueTask<int> InsertAsync({type.TypeName} item, CancellationToken cancellationToken = default)
-	    {{
+        {{
             bool wasClosed = _connection.State == ConnectionState.Closed;
 
             try
             {{
                 if (wasClosed) await _connection.OpenAsync(cancellationToken);
                 using SqlCommand command = new SqlCommand(""INSERT INTO {GetTableName(type)}({string.Join(",", type.Fields.Select(f => f.Name))}) VALUES ({string.Join(",", type.Fields.Select(f => $"@{f.Name}"))})"", _connection);
-			    {GenerateDbParameters(type, "item")}
+                {GenerateDbParameters(type, "item")}
                 return await command.ExecuteNonQueryAsync(cancellationToken);
             }}
             finally
             {{
                 if (wasClosed) _connection.Close();
             }}
-		}}
+        }}
 
-		public async ValueTask<List<{type.TypeName}>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async ValueTask<List<{type.TypeName}>> GetAllAsync(CancellationToken cancellationToken = default)
         {{
             bool wasClosed = _connection.State == ConnectionState.Closed;
 
@@ -96,7 +96,7 @@ namespace {type.Namespace}
                 var buffer = new List<{type.TypeName}>();
                 while (await reader.ReadAsync(cancellationToken))
                 {{
-				    {GenerateReaders(type)}
+                    {GenerateReaders(type)}
                     buffer.Add(new {type.TypeName}({GenerateConstructorParameters(type)}));
                 }}
 
@@ -107,7 +107,7 @@ namespace {type.Namespace}
                 if (wasClosed) _connection.Close();
             }}
         }}
-	}}
+    }}
 }}";
         }
 

@@ -10,9 +10,14 @@ namespace TestApp
     {
         static async Task Main(string[] args)
         {
-            await using var context = Product.CreateDataContext(new SqlConnection("secret :)"));
+            await using var context = Product.CreateDataContext(new SqlConnection(""));
+
+            await context.InsertAsync(new Product(Guid.NewGuid(), "Daniel", 200));
+
             var allProducts = await context.GetAllAsync();
+
             var guid = allProducts.First(x => x.Name == "Jesper").Id;
+
             var product = await context.GetAsync(guid);
             Console.WriteLine(product.ToString());
 
@@ -21,6 +26,9 @@ namespace TestApp
             Console.WriteLine(product2.ToString());
 
             Console.WriteLine(product == product2);
+
+            //await using var annanContext = AnnanProduct.CreateDataContext(new SqlConnection("secret :)"));
+            //var enAnnanProdukt = await annanContext.GetAsync(10);
         }
     }
 
@@ -29,7 +37,7 @@ namespace TestApp
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public uint Number { get; set; }
+        public int Number { get; set; }
     }
 
     [DataModel]

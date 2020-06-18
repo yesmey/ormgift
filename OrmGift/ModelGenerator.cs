@@ -35,9 +35,6 @@ namespace OrmGift
                     var typeCode = DbTypeGenerator.Generate(modelType);
                     var contextCode = DbTypeContextGenerator.Generate(modelType);
 
-                    File.WriteAllText($"C:\\temp\\{type.Name}.Generated.cs", SourceText.From(typeCode, Encoding.UTF8).ToString());
-                    File.WriteAllText($"C:\\temp\\{type.Name}DataContext.Generated.cs", SourceText.From(contextCode, Encoding.UTF8).ToString());
-
                     context.AddSource($"{type.Name}.Generated.cs", SourceText.From(typeCode, Encoding.UTF8));
                     context.AddSource($"{type.Name}DataContext.Generated.cs", SourceText.From(contextCode, Encoding.UTF8));
                 }
