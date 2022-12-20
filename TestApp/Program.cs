@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using OrmGift.DataModeling;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,32 +13,34 @@ namespace TestApp
         {
             await using var context = Product.CreateDataContext(new SqlConnection(""));
 
-            await context.InsertAsync(new Product(Guid.NewGuid(), "Daniel", 200));
+            await context.InsertAsync(new Product(Guid.NewGuid(), "Bertil", 200));
+            await context.InsertAsync(new Product(Guid.NewGuid(), "Potatismos", 900));
 
-            var allProducts = await context.GetAllAsync();
+            List<Product> allProducts = await context.GetAllAsync();
 
-            var guid = allProducts.First(x => x.Name == "Jesper").Id;
+            Guid firstGuid = allProducts.First(x => x.Name == "Bertil").Id;
 
-            var product = await context.GetAsync(guid);
+            Product product = await context.GetAsync(firstGuid);
             Console.WriteLine(product.ToString());
 
-            var otherGuid = allProducts.First(x => x.Name != "Jesper").Id;
-            var product2 = await context.GetAsync(otherGuid);
+            Guid otherGuid = allProducts.First(x => x.Name == "Potatismos").Id;
+            Product product2 = await context.GetAsync(otherGuid);
             Console.WriteLine(product2.ToString());
 
             Console.WriteLine(product == product2);
 
-            //await using var annanContext = AnnanProduct.CreateDataContext(new SqlConnection("secret :)"));
-            //var enAnnanProdukt = await annanContext.GetAsync(10);
+            await using var annanContext = AnnanProduct.CreateDataContext(new SqlConnection(""));
+            AnnanProduct enAnnanProdukt = await annanContext.GetAsync(10);
+            Console.WriteLine(enAnnanProdukt.Value);
         }
     }
 
     [DataModel("CustomDatabaseName")]
     public partial class Product
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public int Number { get; set; }
+        public Guid Id { get; }
+        public string Name { get; }
+        public int Number { get; }
     }
 
     [DataModel]

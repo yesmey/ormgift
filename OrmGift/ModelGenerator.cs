@@ -13,12 +13,12 @@ namespace OrmGift
     [Generator]
     public class ModelGenerator : ISourceGenerator
     {
-        public void Initialize(InitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
             context.RegisterForSyntaxNotifications(() => new ModelSyntaxReceiver());
         }
 
-        public void Execute(SourceGeneratorContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
             if (!(context.SyntaxReceiver is ModelSyntaxReceiver syntaxReceiver))
                 return;
